@@ -1,16 +1,33 @@
 <template>
-  <!-- <HelloWorld /> -->
   <v-app>
     <v-container>
       <h1>Pokédex - Vuetify</h1>
       <v-row>
-        <v-col v-for="pokemon in pokemons" :key="pokemon.name" cols="12" md="4">
-          <v-card>
+        <!-- Itera sobre a lista de Pokémon e exibe cada um -->
+        <v-col v-for="pokemon in pokemons" :key="pokemon.name" cols="12" sm="6" md="2">
+          <v-card @click="openDialog(pokemon)">
             <v-card-title>{{ pokemon.name }}</v-card-title>
             <v-img :src="pokemon.sprites.front_default" alt="{{ pokemon.name }}" height="150" />
           </v-card>
         </v-col>
       </v-row>
+
+      <!-- Modal de Detalhes do Pokémon -->
+      <v-dialog v-model="dialog" max-width="500px" >
+        <v-card>
+          <v-card-title>
+            <span class="headline">{{ selectedPokemon?.name }}</span>
+          </v-card-title>
+          <v-card-subtitle>Detalhes do Pokémon</v-card-subtitle>
+          <v-card-text>
+            <v-img :src="selectedPokemon?.sprites_gif.front_default" alt="Imagem do Pokémon" height="200"></v-img>
+            <!-- Aqui você pode adicionar mais informações sobre o Pokémon -->
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="primary" @click="dialog = false">Fechar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </v-app>
 </template>
@@ -24,10 +41,17 @@ interface Pokemon {
   sprites: {
     front_default: string;
   };
+  sprites_gif: {
+    front_default: string;
+  }
 }
 
 // Array reativo para armazenar os Pokémon
 const pokemons = ref<Pokemon[]>([]);
+
+// Estado para controlar a exibição do modal
+const dialog = ref(false);
+const selectedPokemon = ref<Pokemon | null>(null);
 
 // Função para buscar os primeiros 151 Pokémon
 const fetchPokemons = async () => {
@@ -44,6 +68,7 @@ const fetchPokemons = async () => {
     pokemons.value = responses.map((response) => ({
       name: response.data.name,
       sprites: response.data.sprites,
+      sprites_gif: response.data.sprites.other.showdown,
     }));
 
     console.log(pokemons.value);
@@ -52,5 +77,12 @@ const fetchPokemons = async () => {
   }
 };
 
+// Função para abrir o modal com as informações do Pokémon selecionado
+const openDialog = (pokemon: Pokemon) => {
+  selectedPokemon.value = pokemon;
+  dialog.value = true;
+};
+
+// Chama a função ao montar o componente
 fetchPokemons();
 </script>
