@@ -5,55 +5,31 @@
       <br />
       <Loading v-if="initialLoading" />
       <!-- Campo de busca -->
-      <v-text-field 
-        v-if="!initialLoading" 
-        v-model="searchPokemon" 
-        label="Buscar Pokémon" 
-        class="mb-4"
-      ></v-text-field>
-      
+      <v-text-field v-if="!initialLoading" v-model="searchPokemon" label="Buscar Pokémon" class="mb-4"></v-text-field>
+
       <v-row>
         <!-- Itera apenas sobre os Pokémon filtrados -->
-        <v-col 
-          v-for="pokemon in filteredPokemons" 
-          :key="pokemon.name" 
-          cols="12" 
-          sm="6" 
-          md="3"
-        >
+        <v-col v-for="pokemon in filteredPokemons" :key="pokemon.name" cols="12" sm="6" md="3">
           <v-card @click="openDialog(pokemon)">
             <v-card-title class="d-flex justify-space-between align-center">
               <span>{{ pokemon.name }}</span>
               <div>
-                <v-chip 
-                  v-for="(type, index) in pokemon.types" 
-                  :key="index" 
-                  :color="getTypeClass(type)" 
-                  class="ma-1"
-                  outlined
-                >
+                <v-chip v-for="(type, index) in pokemon.types" :key="index" :color="getTypeClass(type)" class="ma-1"
+                  outlined>
                   {{ type }}
                 </v-chip>
               </div>
             </v-card-title>
             <v-card-subtitle>Nº {{ pokemon.id }}</v-card-subtitle>
-            <v-img 
-              :src="pokemon.sprites.front_default" 
-              alt="{{ pokemon.name }}" 
-              height="150" 
-            />
+            <v-img :src="pokemon.sprites.front_default" alt="{{ pokemon.name }}" height="150" />
           </v-card>
         </v-col>
       </v-row>
 
       <!-- Botão para mostrar mais -->
       <v-container class="d-flex justify-center align-center">
-        <v-btn 
-          v-if="!initialLoading && pokemons.length > visiblePokemons.length" 
-          @click="showMorePokemons"
-          color="primary" 
-          class="mt-4"
-        >
+        <v-btn v-if="!initialLoading && pokemons.length > visiblePokemons.length" @click="showMorePokemons"
+          color="primary" class="mt-4">
           Mostrar mais
         </v-btn>
       </v-container>
@@ -61,18 +37,20 @@
       <!-- Modal de Detalhes do Pokémon -->
       <v-dialog v-model="dialog" max-width="500px">
         <v-card>
-          <v-card-title>
-            <span class="headline">{{ selectedPokemon?.name }}</span>
+          <v-card-title class="d-flex justify-space-between align-center">
+            <span>{{ selectedPokemon?.name }}</span>
+            <div>
+              <v-chip v-for="(type, index) in selectedPokemon?.types" :key="index" :color="getTypeClass(type)"
+                class="ma-1" outlined>
+                {{ type }}
+              </v-chip>
+            </div>
           </v-card-title>
           <v-card-subtitle>
             Nº {{ selectedPokemon?.id }}
           </v-card-subtitle>
           <v-card-text>
-            <v-img 
-              :src="selectedPokemon?.sprites_gif.front_default" 
-              alt="Imagem do Pokémon" 
-              height="200"
-            ></v-img>
+            <v-img :src="selectedPokemon?.sprites_gif.front_default" alt="Imagem do Pokémon" height="200"></v-img>
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" @click="dialog = false">Fechar</v-btn>
